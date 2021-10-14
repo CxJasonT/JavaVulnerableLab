@@ -9,14 +9,18 @@ if(request.getParameter("Login")!=null)
 {
      Connection con=new DBConnect().connect(getServletContext().getRealPath("/WEB-INF/config.properties"));
      String user=request.getParameter("username");
-     String pass=HashMe.hashMe(request.getParameter("password")); //Hashed Password 
+     String pass=HashMe.hashMe(request.getParameter("password")); //Hashed Password
+
+     Encoder esapiEncoder = new DefaultEncoder();
+     String sanitizedUserName = esapiEncoder.encodeForSQL(new OracleCodec(), user)
+
      try
              {
                     if(con!=null && !con.isClosed())
                                {
                                    ResultSet rs=null;
                                    Statement stmt = con.createStatement();  
-                                   rs=stmt.executeQuery("select * from users where username='"+user+"' and password='"+pass+"' and privilege='admin'");
+                                   rs=stmt.executeQuery("select * from users where username='"+sanitizedUserName+"' and password='"+pass+"' and privilege='admin'");
                                    if(rs != null && rs.next()){
                                    session.setAttribute("isLoggedIn", "1");
                                    session.setAttribute("userid", rs.getString("id"));
