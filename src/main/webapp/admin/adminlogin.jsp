@@ -19,8 +19,13 @@ if(request.getParameter("Login")!=null)
                     if(con!=null && !con.isClosed())
                                {
                                    ResultSet rs=null;
-                                   Statement stmt = con.createStatement();  
-                                   rs=stmt.executeQuery("select * from users where username='"+sanitizedUserName+"' and password='"+pass+"' and privilege='admin'");
+                                   String updateStatement =
+                                         "select * from users where username= ? and password= ? and privilege='admin'";
+                                   PreparedStatement statement = con.prepareStatement(updateStatement);
+                                   statement.setInt(1, sanitizedUserName);
+                                   statement.setInt(2, pass);
+
+                                   rs=statement.executeUpdated();
                                    if(rs != null && rs.next()){
                                    session.setAttribute("isLoggedIn", "1");
                                    session.setAttribute("userid", rs.getString("id"));
